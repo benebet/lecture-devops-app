@@ -61,11 +61,11 @@ jobs:
 
       - name: Terraform plan
         id: plan
-        run: terraform plan -no-color -var="ami_id=${{ env.AMI_ID }}" -var="deployer-key=${{ secrets.deployer-key }}" -auto-approve
+        run: terraform plan -no-color -var="ami_id=${{ env.AMI_ID }}" -var="deployer-key=${{ secrets.deployer-key }}"
 
       - name: Terraform apply
         id: apply
-        run: terraform apply -var="ami_id=${{ env.AMI_ID }}" -var="deployer-key=${{ secrets.deployer-key }}"
+        run: terraform apply -auto-approve -var="ami_id=${{ env.AMI_ID }}" -var="deployer-key=${{ secrets.deployer-key }}"
 
       # TODO: SSH into instance and build app with IP and run
       # TODO: Terraform format always fails (exit code 3) in actions
