@@ -10,12 +10,12 @@ terraform {
 }
 
 variable "deployer-key" {
-  type = string
+  type      = string
   sensitive = true
 }
 
 variable "ami_id" {
-  type = string
+  type    = string
 }
 
 provider "aws" {
