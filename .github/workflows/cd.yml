@@ -44,12 +44,6 @@ jobs:
       - name: Build artifact
         run: packer build packer.pkr.hcl
 
-      - name: Get ami ID
-        uses: sergeysova/jq-action@v2
-        id: ami_id
-        with:
-          cmd: 'cat manifest.json | jq -r .builds[0].artifact_id |  cut -d':' -f2'
-
       - name: Setup AMI ID as terraform variable
         run: echo "AMI_ID=$(cat manifest.json | jq -r .builds[0].artifact_id |  cut -d':' -f2)" >> $GITHUB_ENV
 
