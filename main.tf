@@ -24,7 +24,7 @@ provider "aws" {
 }
 
 resource "aws_instance" "todoapp" {
-  key_name        = resource.aws_key_pair.deployer.key_name
+  key_name        = resource.aws_key_pair.deployer-key.key_name
   security_groups = [resource.aws_security_group.allow_ssh.name]
   ami             = var.ami_id
   instance_type   = "t2.micro"
@@ -34,8 +34,9 @@ resource "aws_instance" "todoapp" {
   }
 }
 
-resource "aws_key_pair" "deployer" {
-  key_name   = "deployer-key"
+resource "aws_key_pair" "deployer-key" {
+  key_name   = "deploy-key"
+  provider = aws
   public_key = var.deployer-key
 }
 

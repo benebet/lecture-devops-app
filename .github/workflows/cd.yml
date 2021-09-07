@@ -61,12 +61,12 @@ jobs:
 
       - name: Terraform import
         run: |
-          terraform import -var="ami_id=${{ env.AMI_ID }}" -var="deployer-key=${{ secrets.deployer-key }}" aws_security_group.allow_ssh sg-004f0da837b6c3c8c
-          terraform import -var="ami_id=${{ env.AMI_ID }}" -var="deployer-key=${{ secrets.deployer-key }}" aws_key_pair.deployer key-00d16199f60f59965
+          terraform import -var="ami_id=${{ env.AMI_ID }}" -var="deployer-key=${{ secrets.deployer-key }}" aws_security_group.allow_ssh ${{ secrets.SECURITY_GROUP_ID }}
+          terraform import -var="ami_id=${{ env.AMI_ID }}" -var="deployer-key=${{ secrets.deployer-key }}" aws_key_pair.deployer ${{ secrets.DEPLOYER_KEY_ID }}
 
       - name: Terraform plan
         id: plan
-        run: terraform plan -no-color -var="ami_id=${{ env.AMI_ID }}" -var="deployer-key=${{ secrets.deployer-key }}"
+        run: ${{ env.AMI_ID }}" -var="deployer-key=${{ secrets.deployer-key }}"
 
       - name: Terraform apply
         id: apply
