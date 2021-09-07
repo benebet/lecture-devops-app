@@ -15,7 +15,7 @@ variable "deployer-key" {
 }
 
 variable "ami_id" {
-  type    = string
+  type = string
 }
 
 provider "aws" {

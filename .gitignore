@@ -7,3 +7,6 @@
 terraform.tfstate
 manifest.json
 .terraform.tfstate.lock.info
+terraform.tfstate.backup
+terraform.tfstate.1631024939.backup
+terraform.tfstate.1631024984.backup

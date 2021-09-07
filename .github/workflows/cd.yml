@@ -44,7 +44,7 @@ jobs:
       - name: Build artifact
         run: packer build packer.pkr.hcl
 
-      - name: Setup AMI ID as terraform variable
+      - name: Setup AMI ID as environment variable
         run: echo "AMI_ID=$(cat manifest.json | jq -r .builds[0].artifact_id |  cut -d':' -f2)" >> $GITHUB_ENV
 
       - name: Setup Terraform
@@ -61,8 +61,8 @@ jobs:
 
       - name: Terraform import
         run: |
-          terraform import aws_security_group.allow_ssh sg-004f0da837b6c3c8c
-          terraform import aws_key_pair.deployer key-00d16199f60f59965
+          terraform import -var="ami_id=${{ env.AMI_ID }}" -var="deployer-key=${{ secrets.deployer-key }}" aws_security_group.allow_ssh sg-004f0da837b6c3c8c
+          terraform import -var="ami_id=${{ env.AMI_ID }}" -var="deployer-key=${{ secrets.deployer-key }}" aws_key_pair.deployer key-00d16199f60f59965
 
       - name: Terraform plan
         id: plan
