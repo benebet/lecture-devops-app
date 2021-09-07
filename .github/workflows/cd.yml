@@ -59,6 +59,11 @@ jobs:
         id: validate
         run: terraform validate -no-color
 
+      - name: Terraform import
+        run: |
+          terraform import aws_security_group.allow_ssh sg-004f0da837b6c3c8c
+          terraform import aws_key_pair.deployer key-00d16199f60f59965
+
       - name: Terraform plan
         id: plan
         run: terraform plan -no-color -var="ami_id=${{ env.AMI_ID }}" -var="deployer-key=${{ secrets.deployer-key }}"
