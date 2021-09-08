@@ -59,18 +59,18 @@ jobs:
         id: validate
         run: terraform validate -no-color
 
-      - name: Terraform import
-        run: |
-          terraform import -var="ami_id=${{ env.AMI_ID }}" -var="deployer-key=${{ secrets.deployer-key }}" aws_security_group.allow_ssh ${{ secrets.SECURITY_GROUP_ID }}
-          terraform import -var="ami_id=${{ env.AMI_ID }}" -var="deployer-key=${{ secrets.deployer-key }}" aws_key_pair.deployer-key ${{ secrets.DEPLOYER_KEY_ID }}
+      - name: Terraform import security group
+        run: terraform import -var="ami_id=${{ env.AMI_ID }}" aws_security_group.allow_ssh ${{ secrets.SECURITY_GROUP_ID }}
 
       - name: Terraform plan
         id: plan
-        run: ${{ env.AMI_ID }}" -var="deployer-key=${{ secrets.deployer-key }}"
+        run: ${{ env.AMI_ID }}
 
       - name: Terraform apply
         id: apply
-        run: terraform apply -auto-approve -var="ami_id=${{ env.AMI_ID }}" -var="deployer-key=${{ secrets.deployer-key }}"
+        run: terraform apply -var="ami_id=${{ env.AMI_ID }}" -auto-approve
+
+     - name: Save public ip
 
       # TODO: SSH into instance and build app with IP and run
       # TODO: Terraform format always fails (exit code 3) in actions
