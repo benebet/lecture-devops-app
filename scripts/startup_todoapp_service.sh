@@ -28,7 +28,7 @@ sudo node ./scripts/build.js
 echo "Starting service"
 PUBLIC_URL=http://$PRIVATE_IP
 SERVER_PORT="3000"
-DB_HOST="localhost" #TODO
+DB_HOST="localhost" #TODOS
 DB_PORT="27017"
 cd ../..
 echo "Starting mongodb"
