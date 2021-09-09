@@ -59,9 +59,6 @@ jobs:
         id: validate
         run: terraform validate -no-color
 
-      - name: Terraform import security group
-        run: terraform import -var="ami_id=${{ env.AMI_ID }}" aws_security_group.allow_ssh ${{ secrets.SECURITY_GROUP_ID }}
-
       - name: Terraform plan
         id: plan
         run: ${{ env.AMI_ID }}
@@ -69,8 +66,3 @@ jobs:
       - name: Terraform apply
         id: apply
         run: terraform apply -var="ami_id=${{ env.AMI_ID }}" -auto-approve
-
-     - name: Save public ip
-
-      # TODO: SSH into instance and build app with IP and run
-      # TODO: Terraform format always fails (exit code 3) in actions
