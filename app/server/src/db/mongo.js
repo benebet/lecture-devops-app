@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-require('dotenv').config()
+
+
 // utilize event emitter to indicate connection retries in logs
 // DOCS: https://mongoosejs.com/docs/connections.html#connection-events
 const CONNECTION_EVENTS = [
@@ -14,21 +15,27 @@ if( process.env.NODE_ENV === 'production' ){
         });
     });
 }
-console.log(`JWT-Secret: ${ process.env.JWT_SECRET }`)
-const mongoAtlasUri = `mongodb+srv://${ process.env.MONGODB_USER}:${ process.env.MONGODB_PW }@cluster0.scali.mongodb.net/${ process.env.MONGODB_NAME }?retryWrites=true&w=majority`;
-const mongooseInstance_ = mongoose.connect(mongoAtlasUri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    authSource:"admin",
-    ssl: true
-});
+
+
+const mongooseInstance_ = mongoose.connect(
+    process.env.MONGODB_URL,
+    {
+        useNewUrlParser: true,
+        useCreateIndex: true,
+        useFindAndModify: false,
+
+        useUnifiedTopology: true,
+        heartbeatFrequencyMS: 1000 * 5,         // 1 sec * 5
+        serverSelectionTimeoutMS: 1000 * 10     // 1 sec * 10
+    }
+);
 
 mongooseInstance_
     .then(()=>{
-        process.env.NODE_ENV !== 'test' && console.log( `Connect established to database: ${mongoAtlasUri}` );
+        process.env.NODE_ENV !== 'test' && console.log( `Connect established to database: ${ process.env.MONGODB_URL }` );
     })
     .catch(( err )=>{
-        console.error( `Cannot connect to database: ${mongoAtlasUri}, err: ${err}` );
+        console.error( `Cannot connect to database: ${ process.env.MONGODB_URL }` );
     });
 
 
