@@ -12,6 +12,15 @@ variable "ami_id" {
   type = string
 }
 
+variable "data_volumes" {
+  type = list(object({
+    ebs_volume_id = string
+    availability_zone = string
+  }))
+  description = "List of EBS volumes"
+  default = []
+}
+
 provider "aws" {
   profile = "default"
   region  = "us-east-1"
@@ -30,7 +39,7 @@ provider "aws" {
 
 resource "aws_key_pair" "deployer-key" {
   key_name   = "deployer-key"
-  public_key = file("~/.ssh/id_rsa.pub")
+  public_key = file(".ssh/id_rsa.pub")
 }
 
 #resource "aws_security_group" "allow_ssh" {
