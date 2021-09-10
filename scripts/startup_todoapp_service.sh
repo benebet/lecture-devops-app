@@ -27,7 +27,7 @@ export MONGODB_NAME=myFirstDatabase
 export MONGODB_USER=dbUser #TODO
 export MONGODB_PW=DuHRSa9Xp8suxFsz #TODO
 export JWT_SECRET=myjwtsecret # TODO
-export PORT="3000" #TODO
+export PORT="3000"
 export MONGODB_URL="mongodb+srv://$MONGODB_USER:$MONGODB_PW@cluster0.scali.mongodb.net/$MONGODB_NAME?retryWrites=true&w=majority"
 sudo node ./scripts/build.js
 echo "Starting service"
