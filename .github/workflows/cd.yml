@@ -63,7 +63,7 @@ jobs:
 
       - name: Terraform plan
         id: plan
-        run: ${{ env.AMI_ID }}
+        run: terraform plan -var="ami_id=${{ env.AMI_ID }}"
 
       - name: Terraform apply
         id: apply
