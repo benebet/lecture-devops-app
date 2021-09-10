@@ -1,3 +1,8 @@
+# This workflow is triggered by a workflow_dispatch (manually) and will checkout the repository, configure AWS credentials (need to be saved in github secrets) and build a packer image
+# with all installed dependencies and provision it in AWS as an AMI
+# Terraform will then build the environment in AWS (elb, autoscaling, security groups) and create 2 instances of the packer image
+# After the instances are created a script is executed which will then build the server and estabilsh a connection to the mongodb cluster and finally launch the server
+
 name: CD
 
 on:
@@ -29,9 +34,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ github.event.inputs.token }}
           aws-region: us-east-1
-
-      - name: Set env variables for packer image
-        run: echo "MONGODB_USER=tesuser" >> $GITHUB_ENV
 
       - name: Packer init
         run: packer init .

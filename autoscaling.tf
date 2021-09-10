@@ -1,4 +1,4 @@
-# define autoscaling group
+# Define autoscaling group
 resource "aws_autoscaling_group" "custom-autoscaling-group" {
   name = "custom-autoscaling-group"
   vpc_zone_identifier = [aws_subnet.customvpc-public-1.id,aws_subnet.customvpc-public-2.id]
@@ -16,7 +16,7 @@ resource "aws_autoscaling_group" "custom-autoscaling-group" {
   }
 }
 
-# define autoscaling configuration policy
+# Define autoscaling configuration policy to watch CPU increase
 resource "aws_autoscaling_policy" "custom-cpu-policy" {
   name = "custom-cpu-policy"
   autoscaling_group_name = aws_autoscaling_group.custom-autoscaling-group.name
@@ -26,7 +26,7 @@ resource "aws_autoscaling_policy" "custom-cpu-policy" {
   policy_type = "SimpleScaling"
 }
 
-# define cloud watch monitoring
+# Define cloud watch monitoring alarm for CPU increase
 resource "aws_cloudwatch_metric_alarm" "custom-cpu-alarm" {
   alarm_name = "custom-cpu-alarm"
   alarm_description = "Alarm on CPU usage increase"

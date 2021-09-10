@@ -1,3 +1,5 @@
+# This is the packer file that creates the AMI image with a provisioned shell script
+
 packer {
   required_plugins {
     amazon = {
@@ -10,11 +12,6 @@ packer {
 variable "region" {
   type    = string
   default = "us-east-1"
-}
-
-variable "mongodbUser" {
-  type = string
-  default = env("MONGODB_USER")
 }
 
 locals { timestamp = regex_replace(timestamp(), "[- TZ:]", "") }
@@ -45,8 +42,5 @@ build {
 
   provisioner "shell" {
     script = "./scripts/setup_packer.sh"
-  }
-  provisioner "shell" {
-    inline = ["echo export MONGODB_USER=${var.mongodbUser}"]
   }
 }

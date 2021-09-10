@@ -1,4 +1,5 @@
 terraform {
+  # Require aws as provider
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -8,10 +9,12 @@ terraform {
   required_version = ">= 0.15.1"
 }
 
+# AMI_ID as input variable for terraform
 variable "ami_id" {
   type = string
 }
 
+# TODO needed?
 variable "data_volumes" {
   type = list(object({
     ebs_volume_id = string
@@ -21,39 +24,17 @@ variable "data_volumes" {
   default = []
 }
 
+# Set region to use (us-east-1 needed for educate account)
 provider "aws" {
   profile = "default"
   region  = "us-east-1"
 }
 
-#resource "aws_instance" "todoapp" {
-#  key_name        = resource.aws_key_pair.deployer-key.key_name
-#  security_groups = [aws_security_group.custom-instance-security-group.id]
-#  ami             = var.ami_id
-#  instance_type   = "t2.micro"
-#
-#  tags = {
-#    Name = "TODO_APP_INSTANCE"
-#  }
-#}
-
+# Key pair for SSH
 resource "aws_key_pair" "deployer-key" {
   key_name   = "deployer-key"
   public_key = file(".ssh/id_rsa.pub")
 }
-
-#resource "aws_security_group" "allow_ssh" {
-#  name        = "allow_ssh"
-#  description = "Allow SSH inbound traffic"
-
-#  ingress {
-#    description = "SSH from VPC"
-#    from_port   = 22
-#    to_port     = 22
-#    protocol    = "tcp"
-#    cidr_blocks = ["0.0.0.0/0"]
-#  }
-#}
 
 # define launch configuration
 resource "aws_launch_configuration" "custom-launch-config" {
@@ -62,6 +43,7 @@ resource "aws_launch_configuration" "custom-launch-config" {
   instance_type   = "t2.micro"
   key_name        = resource.aws_key_pair.deployer-key.key_name
   security_groups = [aws_security_group.custom-instance-security-group.id]
+  #FIXME - AWS does not seem to launch script properly - maybe wrong enter directory?
   user_data       = file("scripts/startup_todoapp_service.sh")
 }
 
