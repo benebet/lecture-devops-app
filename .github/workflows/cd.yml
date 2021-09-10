@@ -22,7 +22,6 @@ jobs:
           unset AWS_SECRET_ACCESS_KEY
           unset AWS_SESSION_TOKEN
 
-      #TODO refresh credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -30,6 +29,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ github.event.inputs.token }}
           aws-region: us-east-1
+
+      - name: Set env variables for packer image
+        run: echo "MONGODB_USER=tesuser" >> $GITHUB_ENV
 
       - name: Packer init
         run: packer init .

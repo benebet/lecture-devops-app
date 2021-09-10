@@ -14,8 +14,8 @@ if( process.env.NODE_ENV === 'production' ){
         });
     });
 }
-console.log(`${ process.env.JWT_SECRET }`)
-const mongoAtlasUri = "mongodb+srv://dbUser:DuHRSa9Xp8suxFsz@cluster0.scali.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+console.log(`JWT-Secret: ${ process.env.JWT_SECRET }`)
+const mongoAtlasUri = `mongodb+srv://${ process.env.MONGODB_USER}:${ process.env.MONGODB_PW }@cluster0.scali.mongodb.net/${ process.env.MONGODB_NAME }?retryWrites=true&w=majority`;
 const mongooseInstance_ = mongoose.connect(mongoAtlasUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,

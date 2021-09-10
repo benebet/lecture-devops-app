@@ -22,9 +22,6 @@ sudo rm -rf ./package*
 echo "Build client"
 cd ../../app/client
 export BUILD_PATH=./.local/public
-sudo node ./scripts/build.js
-echo "Starting service"
-cd ../../.local/public
 export PUBLIC_URL=http://$PRIVATE_IP # TODO
 export MONGODB_NAME=myFirstDatabase
 export MONGODB_URL=mongodb://cluster0.scali.mongodb.net:27017/myFirstDatabase
@@ -32,5 +29,8 @@ export MONGODB_USER=dbUser #TODO
 export MONGODB_PW=DuHRSa9Xp8suxFsz #TODO
 export JWT_SECRET=myjwtsecret # TODO
 export PORT="3000"
+sudo node ./scripts/build.js
+echo "Starting service"
+cd ../../.local/public
 echo "Starting server"
 sudo node index.js

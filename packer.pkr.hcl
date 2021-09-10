@@ -12,6 +12,11 @@ variable "region" {
   default = "us-east-1"
 }
 
+variable "mongodbUser" {
+  type = string
+  default = env("MONGODB_USER")
+}
+
 locals { timestamp = regex_replace(timestamp(), "[- TZ:]", "") }
 
 source "amazon-ebs" "ubuntu" {
@@ -40,5 +45,8 @@ build {
 
   provisioner "shell" {
     script = "./scripts/setup_packer.sh"
+  }
+  provisioner "shell" {
+    inline = ["echo export MONGODB_USER=${var.mongodbUser}"]
   }
 }
