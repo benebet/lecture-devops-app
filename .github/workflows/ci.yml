@@ -1,0 +1,77 @@
+# This workflow will checkot the repository, install the server and client dependencies and run the tests
+
+name: CI Run
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+    install-build-test:
+        runs-on: ubuntu-latest
+
+        steps:
+        - name: Git checkout
+          uses: actions/checkout@v2
+
+        - name: Use Node.js 14.x
+          uses: actions/setup-node@v1
+          with:
+            node-version: 14.x
+            cache: 'npm'
+
+        - name: Start MongoDB '4.2'
+          uses: supercharge/mongodb-github-action@1.6.0
+          with:
+            mongodb-version: '4.2'
+
+        - name: Install client dependencies
+          working-directory: ./app/client
+          run: npm install
+
+        - name: Install server dependencies
+          working-directory: ./app/server
+          run: npm install
+
+        - name: Build server
+          run: |
+            echo "Creating temp directory"
+            mkdir -p ./.local/temp
+            rm -rf ./.local/temp
+            echo "Copying server source to temp directory"
+            cp -r ./app/server/src ./.local/temp
+            echo "Copying package files to temp directory"
+            cp ./app/server/package* ./.local/temp/
+            echo "Installing server dependencies"
+            cd ./.local/temp/
+            npm install --prod --no-audit --no-fund
+            echo "Removing package files"
+            rm -rf ./package*
+
+        - name: Build client
+          working-directory: ./app/client
+          run: |
+            export PUBLIC_URL=http://127.0.0.1:3001
+            export BUILD_PATH="./.local/temp/public"
+            echo "Building client"
+            node ./scripts/build.js
+
+        - name: Test client
+          working-directory: ./app/client
+          run: |
+            echo "Running client tests"
+            npm run test
+
+        - name: Generate random string for server testing
+          run: |
+            echo "RANDOM_STRING=$(echo $(openssl rand -hex 20))" >> $GITHUB_ENV
+
+        - name: Test server
+          working-directory: ./app/server
+          run: |
+            echo "JWT: ${{ env.RANDOM_STRING }}"
+            export PORT=3002
+            export MONGODB_URL=mongodb://localhost:27017/${{ env.RANDOM_STRING }}
+            export JWT_SECRET=${{ env.RANDOM_STRING }}
+            echo "Running server tests"
+            npm run test

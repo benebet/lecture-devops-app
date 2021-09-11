@@ -1,0 +1,72 @@
+# This workflow is triggered by a workflow_dispatch (manually) and will checkout the repository, configure AWS credentials (need to be saved in github secrets) and build a packer image
+# with all installed dependencies and provision it in AWS as an AMI
+# Terraform will then build the environment in AWS (elb, autoscaling, security groups) and create 2 instances of the packer image
+# After the instances are created a script is executed which will then build the server and estabilsh a connection to the mongodb cluster and finally launch the server
+
+name: CD
+
+on:
+  workflow_dispatch:
+    inputs:
+      token:
+        description: 'AWS session token'
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Unset variables
+        run: |
+          unset AWS_ACCESS_KEY_ID
+          unset AWS_SECRET_ACCESS_KEY
+          unset AWS_SESSION_TOKEN
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ github.event.inputs.token }}
+          aws-region: us-east-1
+
+      - name: Packer init
+        run: packer init .
+
+      - name: Validate packer template
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: validate
+          arguments: -syntax-only
+          target: packer.pkr.hcl
+
+      - name: Build artifact
+        run: packer build packer.pkr.hcl
+
+      - name: Setup AMI ID as environment variable
+        run: echo "AMI_ID=$(cat manifest.json | jq -r .builds[0].artifact_id |  cut -d':' -f2)" >> $GITHUB_ENV
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.6
+
+      - name: 'Terraform Init'
+        run: terraform init
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Terraform plan
+        id: plan
+        run: terraform plan -var="ami_id=${{ env.AMI_ID }}"
+
+      - name: Terraform apply
+        id: apply
+        run: terraform apply -var="ami_id=${{ env.AMI_ID }}" -auto-approve
