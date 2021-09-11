@@ -5,6 +5,7 @@ sudo apt-get update
 export PRIVATE_IP=`ifconfig | grep -E '(inet addr:172)' | awk '{ print $2 }' | cut -d ':' -f 2`
 #echo 'This is my IP: ' $MYIP > var/www/html/index.html #Use this to verify the server ip and reachability
 cd ~/lecture-devops-app
+# Test
 # Build the server
 echo "Build server"
 echo "Creating public directory"
